@@ -123,17 +123,20 @@ void inithoc() {
   char* pmes = 0;
 
 #if NRNMPI_DYNAMICLOAD
+  fprintf(stderr, "== WARNING dynamic load\n");
   nrnmpi_stubs();
   // if nrnmpi_load succeeds (MPI available), pmes is nil.
   pmes = nrnmpi_load(1);
 #endif //NRNMPI_DYNAMICLOAD
 
+  fprintf(stderr, "(1) Init: %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi);
   // avoid having to include the c++ version of mpi.h
   if (!pmes) {
     nrnmpi_wrap_mpi_init(&flag);
   }
   // MPI_Initialized(&flag);
 
+  fprintf(stderr, "(2) Init: %d %d flag %d\n", argc==argc_mpi, argv == (char**)argv_mpi, flag);
   if (flag) {
     mpi_mes = 1;
 
@@ -155,6 +158,7 @@ void inithoc() {
   } else {
     mpi_mes = 3;
   }
+  fprintf(stderr, "(3) Init: %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi);
   if (pmes && mpi_mes == 2){exit(1);}  // avoid unused variable warning
 
 #endif //NRNMPI
@@ -176,6 +180,7 @@ void inithoc() {
   nrn_is_python_extension = (pyver[0]-'0')*10 + (pyver[2] - '0');
   p_nrnpython_finalize = nrnpython_finalize;
 #if NRNMPI
+  fprintf(stderr, "MPI: init: %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi);
   nrnmpi_init(1, &argc, &argv);  // may change argc and argv
 #if 0 && !defined(NRNMPI_DYNAMICLOAD)
 	if (nrnmpi_myid == 0) {

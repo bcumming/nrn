@@ -79,6 +79,9 @@ void nrnmpi_init(int nrnmpi_under_nrncontrol, int* pargc, char*** pargv) {
         // NOT call MPI_Init.
         b = 0;
         for (i=0; i < *pargc; ++i) {
+            fprintf(stderr, "arg %d: '%s'\n", i, (*pargv)[i]);
+        }
+        for (i=0; i < *pargc; ++i) {
             if (strncmp("-p4", (*pargv)[i], 3) == 0) {
                 b = 1;
                 break;
