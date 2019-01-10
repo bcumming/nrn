@@ -350,8 +350,7 @@ void prargs(const char* s, int argc, const char** argv) {
 
 int nrnmpi_init_pc() {
 #if NRNMPI
-  if (1) {
-
+  if (!nrnmpi_use) {
 #if NRNMPI_DYNAMICLOAD
     nrnmpi_stubs();
     const char* pmes = nrnmpi_load(1);
@@ -362,6 +361,7 @@ int nrnmpi_init_pc() {
     
     char** foo = (char**)nrn_global_argv;
     nrnmpi_init(2, &nrn_global_argc, &foo);
+    //if (nrnmpi_myid == 0) {printf("nrnmpi_init_pc called nrnmpi_init\n");}
   }
 #endif
   return 0;

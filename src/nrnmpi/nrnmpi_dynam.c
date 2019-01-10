@@ -103,7 +103,7 @@ sprintf(pmes+strlen(pmes), "Is openmpi installed? If not in default location, ne
 	sprintf(pmes, "Try loading openmpi\n");
 	void* handle = load_mpi("libmpi.so", pmes+strlen(pmes));
 	if (handle) {
-		if (!load_nrnmpi("libnrnmpi.so", pmes+strlen(pmes))){
+		if (!load_nrnmpi(NRN_LIBDIR"/libnrnmpi.so", pmes+strlen(pmes))){
 			return pmes;
 		}
 	}else{
