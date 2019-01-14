@@ -70,7 +70,7 @@ void nrnmpi_init(int nrnmpi_under_nrncontrol, int* pargc, char*** pargv) {
     if( nrnmpi_under_nrncontrol_ ) {
 
 #if !ALWAYS_CALL_MPI_INIT
-        fprintf(stderr, "NEURON MPI !ALWAYS_CALL_MPI_INIT\n");
+        fprintf(stderr, "NEURON MPI !ALWAYS_CALL_MPI_INIT, %d arguments\n", *pargc);
         // this is not good. depends on mpirun adding at least one
         // arg that starts with -p4 but that probably is dependent
         // on mpich and the use of the ch_p4 device. We are trying to
@@ -263,7 +263,12 @@ void nrnmpi_subworld_size(int n) {
 
 /* so src/nrnpython/inithoc.cpp does not have to include a c++ mpi.h */
 int nrnmpi_wrap_mpi_init(int* flag) {
-    return MPI_Initialized(flag);
+    fprintf(stderr, "testing if MPI initialized\n");
+    int result = MPI_Initialized(flag);
+    fprintf(stderr, "  %s\n", (*flag)? "initialized": "uninitialized");
+    if (result != MPI_SUCCESS) fprintf(stderr, "ERROR MPI\n");
+    return result;
+    //return MPI_Initialized(flag);
 }
     
 #endif

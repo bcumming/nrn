@@ -129,14 +129,12 @@ void inithoc() {
   pmes = nrnmpi_load(1);
 #endif //NRNMPI_DYNAMICLOAD
 
-  fprintf(stderr, "(1) Init: %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi);
   // avoid having to include the c++ version of mpi.h
   if (!pmes) {
     nrnmpi_wrap_mpi_init(&flag);
   }
   // MPI_Initialized(&flag);
 
-  fprintf(stderr, "(2) Init: %d %d flag %d\n", argc==argc_mpi, argv == (char**)argv_mpi, flag);
   if (flag) {
     mpi_mes = 1;
 
@@ -158,7 +156,7 @@ void inithoc() {
   } else {
     mpi_mes = 3;
   }
-  fprintf(stderr, "(3) Init: %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi);
+  fprintf(stderr, "MPI Init: %d %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi, flag);
   if (pmes && mpi_mes == 2){exit(1);}  // avoid unused variable warning
 
 #endif //NRNMPI
@@ -166,12 +164,18 @@ void inithoc() {
 #if !defined(__CYGWIN__)
   sprintf(buf, "%s/.libs/libnrnmech.so", NRNHOSTCPU);
   // printf("buf = |%s|\n", buf);
+
+  fprintf(stderr, "MPI: yes, we are opening the file: %s\n", buf);
   FILE* f;
   if ((f = fopen(buf, "r")) != 0) {
     fclose(f);
+    fprintf(stderr, "     the file exists, so we do the thing\n");
     argc += 2;
     argv[argc - 1] = new char[strlen(buf) + 1];
     strcpy(argv[argc - 1], buf);
+  }
+  else {
+    fprintf(stderr, "     file didn't exist\n");
   }
 #endif // !defined(__CYGWIN__)
   nrn_is_python_extension = 1;
@@ -182,23 +186,6 @@ void inithoc() {
 #if NRNMPI
   fprintf(stderr, "MPI: init: %d %d\n", argc==argc_mpi, argv == (char**)argv_mpi);
   nrnmpi_init(1, &argc, &argv);  // may change argc and argv
-#if 0 && !defined(NRNMPI_DYNAMICLOAD)
-	if (nrnmpi_myid == 0) {
-		switch(mpi_mes) {
-			case 0:
-				break;
-			case 1:
-  printf("MPI_Initialized==true, MPI functionality enabled by Python.\n");
-				break;
-			case 2:
-  printf("MPI functionality enabled by NEURON.\n");
-				break;
-			case 3:
-  printf("MPI_Initialized==false, MPI functionality not enabled.\n");
-				break;
-		}
-	}
-#endif // 0 && !defined(NRNMPI_DYNAMICLOAD)
   if (pmes) {
     free(pmes);
   }
